@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ABBAS AI - إشارات متقدمة</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;800;900&family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --neon-green: #00ff88;
+            --neon-cyan: #00e1ff;
+            --neon-purple: #b026ff;
+            --dark-bg: #030712;
+            --glass-bg: rgba(17, 24, 39, 0.4);
+            --glass-border: rgba(255, 255, 255, 0.08);
+        }
+        
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: var(--dark-bg);
+            background-image: radial-gradient(circle at 50% 0%, #111827 0%, #030712 60%, #000000 100%);
+            color: white;
+            overflow-x: hidden;
+            user-select: none;
+            min-height: 100vh;
+        }
+        
+        .mono-font { font-family: 'JetBrains Mono', monospace; }
+
+        .ambient-blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.15;
+            z-index: 0;
+            pointer-events: none;
+            animation: float 10s infinite alternate ease-in-out;
+        }
+        .blob-1 { top: 10%; right: 20%; width: 400px; height: 400px; background: var(--neon-cyan); }
+        .blob-2 { bottom: 20%; left: 10%; width: 500px; height: 500px; background: var(--neon-green); animation-delay: -5s; }
+        .blob-3 { top: 50%; right: 50%; width: 300px; height: 300px; background: var(--neon-purple); opacity: 0.1; }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(30px, 50px) scale(1.1); }
+        }
+
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .neon-text-green { color: var(--neon-green); text-shadow: 0 0 10px rgba(0, 255, 136, 0.5), 0 0 20px rgba(0, 255, 136, 0.3); }
+        .neon-text-cyan { color: var(--neon-cyan); text-shadow: 0 0 10px rgba(0, 225, 255, 0.5); }
+
+        .cyber-card {
+            position: relative;
+            border-radius: 1.25rem;
+            overflow: hidden;
+            z-index: 1;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s;
+            background: rgba(10, 15, 25, 0.5);
+        }
+
+        .btn-generate {
+            position: relative;
+            background: linear-gradient(135deg, rgba(0,255,136,0.2), rgba(0,225,255,0.2));
+            border: 1px solid var(--neon-green);
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.2), inset 0 0 20px rgba(0, 255, 136, 0.1);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        .btn-generate:hover {
+            box-shadow: 0 0 25px rgba(0, 255, 136, 0.4), inset 0 0 30px rgba(0, 255, 136, 0.2);
+            text-shadow: 0 0 8px rgba(255,255,255,0.8);
+        }
+
+        @keyframes neon-pulse-blue {
+            0% { box-shadow: 0 0 10px rgba(37, 99, 235, 0.4); filter: brightness(1); }
+            100% { box-shadow: 0 0 35px rgba(59, 130, 246, 0.9), 0 0 15px rgba(96, 165, 250, 0.6); filter: brightness(1.25); }
+        }
+        .btn-deposit-pulse { animation: neon-pulse-blue 1.2s infinite alternate ease-in-out; }
+
+        @keyframes slideInDown {
+            from { opacity: 0; transform: translateY(-10px); background: rgba(0,255,136,0.1); }
+            to { opacity: 1; transform: translateY(0); background: transparent; }
+        }
+        .new-row { animation: slideInDown 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+
+        @keyframes attention-pulse {
+            0% { box-shadow: 0 0 0 0 rgba(96, 165, 250, 0.1); border-color: rgba(71, 85, 105, 0.4); }
+            50% { box-shadow: 0 0 10px rgba(96, 165, 250, 0.2); border-color: rgba(96, 165, 250, 0.5); }
+            100% { box-shadow: 0 0 0 0 rgba(96, 165, 250, 0.1); border-color: rgba(71, 85, 105, 0.4); }
+        }
+        .needs-selection {
+            animation: attention-pulse 2.5s infinite ease-in-out;
+            border-color: rgba(71, 85, 105, 0.4);
+        }
+
+        .faq-content {
+            max-height: 0; overflow: hidden;
+            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: rgba(0,0,0,0.3); }
+        ::-webkit-scrollbar-thumb { background: #374151; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--neon-cyan); box-shadow: 0 0 10px var(--neon-cyan); }
+    </style>
+</head>
+<body class="antialiased flex flex-col relative">
+
+    <div class="ambient-blob blob-1"></div>
+    <div class="ambient-blob blob-2"></div>
+    <div class="ambient-blob blob-3"></div>
+
+    <nav class="glass-panel sticky top-0 z-40 w-full px-3 sm:px-4 py-3 sm:py-4 flex justify-between items-center border-b border-gray-800/60 shadow-[0_4px_30px_rgba(0,0,0,0.5)]">
+        <div class="flex items-center gap-2 sm:gap-3 cursor-pointer group" onclick="navigate('home')">
+            <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700 flex items-center justify-center shadow-[0_0_15px_rgba(0,225,255,0.15)] group-hover:border-cyan-500/50 transition-colors">
+                <i class="fa-solid fa-microchip text-lg sm:text-xl neon-text-cyan"></i>
+            </div>
+            <span class="font-black text-lg sm:text-xl tracking-widest text-white font-mono" dir="ltr">ABBAS <span class="neon-text-green font-bold">AI</span> <span class="text-lg sm:text-xl ml-1 drop-shadow-md">🇮🇶</span></span>
+        </div>
+        <div class="flex items-center gap-3 sm:gap-4 text-[10px] sm:text-xs font-bold tracking-wide">
+            <div class="flex items-center gap-1.5 sm:gap-2 bg-black/40 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg border border-white/5 shadow-inner">
+                <div class="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-green-500 animate-pulse shadow-[0_0_8px_#00ff88]"></div>
+                <span class="text-gray-400 uppercase">الخادم: <span class="neon-text-green">متصل</span></span>
+            </div>
+            <div class="hidden sm:flex items-center gap-2 bg-black/40 px-4 py-2 rounded-lg border border-white/5 shadow-inner">
+                <i class="fa-solid fa-users text-cyan-500/70"></i>
+                <span class="text-gray-400"><span id="user-count" class="text-white font-black">1,482</span> مستخدم</span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="bg-gradient-to-r from-red-900/0 via-red-900/40 to-red-900/0 border-y border-red-500/20 text-center py-2 text-[10px] sm:text-xs font-black text-red-400 uppercase tracking-[0.2em] flex justify-center items-center gap-2 sm:gap-3 shadow-[0_0_20px_rgba(255,0,0,0.1)] relative z-10 backdrop-blur-sm">
+        <i class="fa-solid fa-bolt animate-pulse"></i>
+        تبقى 4 مقاعد VIP فقط اليوم
+        <i class="fa-solid fa-bolt animate-pulse"></i>
+    </div>
+
+    <main id="app-container" class="flex-grow w-full max-w-6xl mx-auto p-4 sm:p-6 lg:p-8 relative z-10">
+        
+        <!-- VIEW: HOME (Game Selection & ID Input) -->
+        <div id="view-home" class="w-full h-full pb-20 fade-in">
+            <div class="text-center mb-8 sm:mb-12 mt-4 sm:mt-6 px-2">
+                <h1 class="text-3xl sm:text-4xl md:text-6xl font-black mb-3 sm:mb-4 bg-clip-text text-transparent bg-gradient-to-br from-white via-gray-200 to-gray-500 tracking-tight drop-shadow-lg">
+                    اختر الخوارزمية
+                </h1>
+                <p class="text-gray-400 max-w-2xl mx-auto font-medium tracking-wide text-xs sm:text-sm md:text-base leading-relaxed">
+                    الشبكة العصبية الخاصة بنا <span class="text-cyan-400 font-bold">تتخطى نظام Provably Fair v4.2</span>. اختر اللعبة وأدخل رقم حسابك لبدء التحليل.
+                </p>
+            </div>
+
+            <!-- ГРИД ИГР -->
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-4 sm:gap-5 lg:gap-8" id="games-grid">
+                <!-- Заполняется через JS -->
+            </div>
+
+            <!-- ID INPUT BLOCK -->
+            <div class="mt-8 sm:mt-12 glass-panel p-5 sm:p-8 rounded-2xl border border-gray-700/50 max-w-2xl mx-auto flex flex-col gap-4 sm:gap-5 shadow-[0_0_30px_rgba(0,0,0,0.5)] relative z-10">
+                <div class="flex justify-between items-center mb-1">
+                    <label class="text-white font-bold text-sm sm:text-lg tracking-wide">رقم الحساب (1xBET ID)</label>
+                    <i class="fa-solid fa-id-card text-cyan-500 text-lg"></i>
+                </div>
+                <input type="text" inputmode="numeric" id="userid-input" placeholder="أدخل 10 أرقام" class="w-full bg-[#050810] border-2 border-gray-700 rounded-xl px-4 py-3.5 sm:py-4 text-white text-center text-lg sm:text-xl outline-none focus:border-neon-green transition-colors font-mono tracking-widest shadow-inner placeholder-gray-600" />
+                <button onclick="startAnalysis()" id="analyze-btn" class="btn-generate w-full py-3.5 sm:py-4 rounded-xl text-white font-black text-base sm:text-xl uppercase tracking-widest mt-2 flex items-center justify-center gap-3">
+                    <i class="fa-solid fa-microchip"></i> بدء تحليل AI
+                </button>
+            </div>
+
+            <!-- ТАБЛИЦА СИГНАЛОВ -->
+            <div class="mt-16 sm:mt-20 w-full max-w-4xl mx-auto">
+                <div class="flex items-center gap-3 mb-5 sm:mb-6 px-2">
+                    <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-cyan-500/10 flex items-center justify-center border border-cyan-500/20">
+                        <i class="fa-solid fa-radar text-cyan-400 animate-spin-slow text-sm sm:text-base"></i>
+                    </div>
+                    <h3 class="text-white font-bold text-lg sm:text-xl tracking-wide">الاعتراضات المباشرة</h3>
+                </div>
+                
+                <div class="glass-panel rounded-2xl overflow-hidden overflow-x-auto">
+                    <table class="w-full text-right text-xs sm:text-sm min-w-[450px]">
+                        <thead class="bg-black/40 text-[10px] sm:text-xs uppercase text-gray-500 tracking-wider font-bold border-b border-gray-800">
+                            <tr>
+                                <th class="px-4 sm:px-5 py-3 sm:py-4">العقدة المستهدفة</th>
+                                <th class="px-4 sm:px-5 py-3 sm:py-4 text-left" dir="ltr">الهاش مفكوك الشفرة</th>
+                                <th class="px-4 sm:px-5 py-3 sm:py-4 text-left">الحالة</th>
+                            </tr>
+                        </thead>
+                        <tbody id="signals-table-body" class="divide-y divide-gray-800/30">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- FAQ SECTION -->
+            <div class="mt-12 sm:mt-16 w-full max-w-4xl mx-auto mb-10">
+                <div class="flex items-center gap-3 mb-5 sm:mb-6 px-2">
+                    <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-purple-500/10 flex items-center justify-center border border-purple-500/20">
+                        <i class="fa-solid fa-database text-purple-400 text-sm sm:text-base"></i>
+                    </div>
+                    <h3 class="text-white font-bold text-lg sm:text-xl tracking-wide">قاعدة المعرفة</h3>
+                </div>
+                
+                <div class="space-y-3">
+                    <div class="glass-panel rounded-xl overflow-hidden group">
+                        <button onclick="toggleFaq(this)" class="w-full text-right px-4 sm:px-5 py-3 sm:py-4 text-gray-200 font-bold tracking-wide flex justify-between items-center focus:outline-none hover:bg-white/5 transition-colors text-xs sm:text-sm">
+                            <span>ما مدى سرعة استرداد وديعتي؟</span>
+                            <i class="fa-solid fa-chevron-down text-gray-500 transition-transform duration-300 group-hover:text-cyan-400"></i>
+                        </button>
+                        <div class="faq-content bg-black/20">
+                            <p class="px-4 sm:px-5 pb-4 sm:pb-5 pt-1 text-[10px] sm:text-xs text-gray-400 leading-relaxed font-medium">معظم مستخدمي VIP يضاعفون إيداعاتهم في أول 3 إلى 4 إشارات. نوصي باللعب بحذر في البداية لتأمين أرباحك.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TRUST BADGES -->
+            <div class="flex flex-wrap justify-center gap-6 sm:gap-8 mt-16 sm:mt-20 opacity-50 text-[9px] sm:text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] pb-8">
+                <div class="flex items-center gap-2 drop-shadow-md"><i class="fa-solid fa-shield-halved text-green-500 text-sm sm:text-base"></i> درع ضد الحظر v3.1</div>
+                <div class="flex items-center gap-2 drop-shadow-md"><i class="fa-solid fa-lock text-cyan-500 text-sm sm:text-base"></i> مؤمن بـ 256-Bit SSL</div>
+                <div class="flex items-center gap-2 drop-shadow-md"><i class="fa-solid fa-ghost text-purple-500 text-sm sm:text-base"></i> API غير قابل للكشف</div>
+            </div>
+        </div>
+
+        <!-- VIEW: ACTIVATION -->
+        <div id="view-activation" class="hidden w-full min-h-[80vh] flex flex-col pt-4 pb-20 relative z-10">
+            <button onclick="navigate('home')" class="absolute top-0 right-0 text-gray-400 hover:text-white transition-all flex items-center gap-2 glass-panel px-4 py-2 rounded-xl text-sm font-bold tracking-wide z-10">
+                <i class="fa-solid fa-arrow-right"></i>
+            </button>
+
+            <!-- СЖАТЫЙ ВЕРХНИЙ БЛОК ДЛЯ МОБИЛОК -->
+            <div class="text-center mb-4 sm:mb-6 mt-4 sm:mt-4 px-2">
+                <div class="inline-flex items-center justify-center w-8 h-8 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-gradient-to-br from-yellow-500/20 to-orange-500/5 border border-yellow-500/30 text-yellow-400 mb-1 sm:mb-3 shadow-[0_0_15px_rgba(234,179,8,0.15)] relative overflow-hidden">
+                    <div class="absolute inset-0 bg-white/5 -skew-x-12 -translate-x-full"></div>
+                    <i class="fa-solid fa-lock text-base sm:text-xl drop-shadow-md"></i>
+                </div>
+                <h2 class="text-lg sm:text-xl md:text-2xl font-black mb-1 sm:mb-2 text-white tracking-tight drop-shadow-lg">مطلوب وصول VIP</h2>
+                <p class="text-gray-400 max-w-lg mx-auto font-medium text-[9px] sm:text-xs leading-snug sm:leading-relaxed">
+                    لاعتراض الهاش مباشرة، تحتاج إلى ترخيص نشط. اختر دفع الرسوم القياسية أو احصل عليه <span class="neon-text-green font-black uppercase">مجاناً 100%</span> عبر راعينا.
+                </p>
+                
+                <div class="mt-2 sm:mt-3 inline-flex items-center gap-1.5 sm:gap-2 bg-red-900/20 border border-red-500/40 px-2.5 sm:px-4 py-1 sm:py-1.5 rounded-full backdrop-blur-md shadow-[0_0_10px_rgba(255,0,0,0.1)]">
+                    <i class="fa-solid fa-hourglass-half text-red-400 animate-pulse text-[8px] sm:text-[10px]"></i>
+                    <span class="text-red-300 text-[8px] sm:text-[10px] font-bold uppercase tracking-wide">تم حجز المكان لمدة: <span id="slot-timer" class="text-white mono-font text-[10px] sm:text-sm mr-1 font-black shadow-black drop-shadow-md" dir="ltr">15:00</span></span>
+                </div>
+            </div>
+
+            <!-- СЕТКА ТАРИФОВ -->
+            <div class="flex flex-col-reverse md:grid md:grid-cols-2 gap-6 lg:gap-8 w-full max-w-4xl mx-auto px-2 sm:px-0">
+                
+                <!-- Option 1: The Decoy -->
+                <div class="glass-panel rounded-3xl p-6 sm:p-8 relative flex flex-col opacity-70 hover:opacity-100 transition-opacity duration-300 border-gray-700 mt-4 md:mt-0">
+                    <div class="text-center border-b border-gray-800 pb-5 sm:pb-6 mb-5 sm:mb-6">
+                        <h3 class="text-gray-400 text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] mb-2">ترخيص قياسي</h3>
+                        <div class="text-3xl sm:text-4xl font-black text-white tracking-tight" dir="ltr">100.00 <span class="text-base sm:text-lg text-gray-500">USDT</span></div>
+                    </div>
+                    
+                    <ul class="space-y-3 sm:space-y-4 text-xs sm:text-sm text-gray-300 mb-6 sm:mb-8 flex-grow font-medium">
+                        <li class="flex items-center gap-3"><div class="w-5 h-5 rounded-full bg-green-500/20 flex items-center justify-center"><i class="fa-solid fa-check text-green-400 text-[10px]"></i></div> ترخيص لمدة 7 أيام</li>
+                        <li class="flex items-center gap-3"><div class="w-5 h-5 rounded-full bg-green-500/20 flex items-center justify-center"><i class="fa-solid fa-check text-green-400 text-[10px]"></i></div> جميع الألعاب مفتوحة</li>
+                        <li class="flex items-center gap-3 opacity-60"><div class="w-5 h-5 rounded-full bg-red-500/20 flex items-center justify-center"><i class="fa-solid fa-xmark text-red-400 text-[10px]"></i></div> تكلفة أولية عالية</li>
+                    </ul>
+
+                    <a href="https://trafflobar.github.io/arb_iqd/" target="_blank" class="w-full bg-gray-800 hover:bg-gray-700 text-white font-black text-xs sm:text-sm py-3.5 sm:py-4 px-4 rounded-xl transition-all flex items-center justify-center gap-2 sm:gap-3 mt-auto border border-gray-600 shadow-lg tracking-widest uppercase">
+                        <i class="fa-brands fa-bitcoin text-yellow-500 text-lg sm:text-xl drop-shadow-md"></i> الدفع بالعملات الرقمية
+                    </a>
+                </div>
+
+                <!-- Option 2: The Target (Free - Сверху на мобилках) -->
+                <div class="glass-panel border-green-500/40 rounded-3xl p-5 sm:p-8 relative shadow-[0_0_40px_rgba(0,255,136,0.1)] flex flex-col transform md:-translate-y-4 bg-gradient-to-b from-[rgba(0,255,136,0.05)] to-transparent">
+                    <div class="absolute -top-3 sm:-top-4 right-1/2 transform translate-x-1/2 bg-green-500 text-black font-black text-[9px] sm:text-[10px] md:text-xs uppercase px-4 sm:px-5 py-1.5 rounded-full tracking-widest shadow-[0_0_20px_rgba(0,255,136,0.4)] w-max">
+                        موصى به بشدة
+                    </div>
+
+                    <div class="text-center border-b border-gray-700/60 pb-5 sm:pb-6 mb-5 sm:mb-6 mt-2 sm:mt-0">
+                        <h3 class="neon-text-green text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] mb-2">مغطى من قبل الراعي</h3>
+                        <div class="text-3xl sm:text-4xl font-black text-white tracking-tight" dir="ltr">مجاناً <span class="text-base sm:text-lg text-gray-500 line-through opacity-50 ml-1">100 USDT</span></div>
+                    </div>
+                    
+                    <p class="text-xs sm:text-sm text-gray-300 mb-5 sm:mb-6 text-center leading-relaxed font-medium">
+                        راعينا <span class="font-black text-blue-400 drop-shadow-md">1xBET</span> سيدفع ثمن ترخيصك إذا اتبعت 3 خطوات بسيطة:
+                    </p>
+
+                    <div class="space-y-3 sm:space-y-4 mb-6 sm:mb-8 flex-grow">
+                        <div class="flex gap-3 sm:gap-4 items-center bg-black/40 p-3 sm:p-3.5 rounded-xl border border-white/5">
+                            <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-green-500/20 text-green-400 flex items-center justify-center font-black text-xs sm:text-sm shrink-0 border border-green-500/30">1</div>
+                            <div class="text-xs sm:text-sm text-gray-200 font-medium">أنشئ حساباً <b class="text-white">جديداً</b> على 1xBET.</div>
+                        </div>
+                        
+                        <div class="flex gap-3 sm:gap-4 items-start bg-black/40 p-3 sm:p-4 rounded-xl border border-green-500/20 shadow-[inset_0_0_20px_rgba(0,255,136,0.02)]">
+                            <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-green-500/20 text-green-400 flex items-center justify-center font-black text-xs sm:text-sm shrink-0 border border-green-500/30 mt-0.5 sm:mt-1">2</div>
+                            <div class="text-xs sm:text-sm text-gray-200 font-medium w-full">
+                                أدخل الرمز الترويجي عند التسجيل:
+                                <div class="flex items-center bg-[#050810] border border-green-500/40 rounded-xl overflow-hidden mt-2 sm:mt-3 w-full shadow-inner" dir="ltr">
+                                    <button onclick="copyText('promo-code')" class="bg-green-600 hover:bg-green-500 px-4 sm:px-5 py-2.5 sm:py-3 text-white transition-colors font-black text-[10px] sm:text-sm uppercase tracking-wider">
+                                        نسخ
+                                    </button>
+                                    <input type="text" readonly value="IQD77" id="promo-code" class="bg-transparent neon-text-green font-black text-base sm:text-xl py-2.5 sm:py-3 px-3 sm:px-4 outline-none mono-font w-full text-center tracking-[0.1em] sm:tracking-[0.15em]">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-3 sm:gap-4 items-start bg-black/40 p-4 sm:p-5 rounded-xl border border-white/5 flex-col w-full relative">
+                            <div class="flex items-center gap-3 w-full mb-2 sm:mb-3">
+                                <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-green-500/20 text-green-400 flex items-center justify-center font-black text-xs sm:text-sm shrink-0 border border-green-500/30">3</div>
+                                <div class="text-[10px] sm:text-xs text-gray-300 font-black uppercase tracking-[0.1em]">حدد مستوى الإيداع:</div>
+                            </div>
+
+                            <div class="bg-blue-500/10 border border-blue-500/30 p-3 rounded-xl mb-1 text-center w-full">
+                                <p class="text-blue-400 text-[10px] sm:text-xs font-bold leading-relaxed">
+                                    <i class="fa-solid fa-circle-exclamation ml-1"></i> هام: يجب إيداع هذا المبلغ في حسابك الشخصي على 1xBET، وستستخدمه للعب الخاص بك.
+                                </p>
+                            </div>
+                            
+                            <div class="w-full space-y-2.5 sm:space-y-3 mt-2" id="deposit-tiers">
+                                <div id="tier-1" onclick="selectTier(1)" class="cursor-pointer border border-green-500/50 bg-green-500/10 rounded-xl p-3 sm:p-4 transition-all duration-300 transform scale-[1.02] shadow-[0_0_20px_rgba(0,255,136,0.15)] relative overflow-hidden">
+                                    <div class="absolute inset-0 bg-gradient-to-r from-green-500/5 via-transparent to-transparent opacity-50"></div>
+                                    <div class="flex justify-between items-center mb-2 sm:mb-3 relative z-10">
+                                        <div class="flex items-center gap-2 sm:gap-3">
+                                            <span class="text-white font-black text-lg sm:text-xl tracking-tight" dir="ltr">10,000 IQD</span>
+                                            <span class="bg-green-500/20 text-green-300 text-[8px] sm:text-[9px] px-2 sm:px-2.5 py-1 rounded-md uppercase font-black tracking-widest border border-green-500/30">أساسي</span>
+                                        </div>
+                                        <div id="tier-1-radio" class="w-5 h-5 sm:w-6 sm:h-6 rounded-full border-[3px] sm:border-4 border-green-400 bg-[#050810] flex items-center justify-center shadow-[0_0_10px_rgba(0,255,136,0.5)]"></div>
+                                    </div>
+                                </div>
+
+                                <div id="tier-2" onclick="selectTier(2)" class="cursor-pointer border border-gray-700/50 bg-black/30 hover:bg-white/5 rounded-xl p-3 sm:p-4 transition-all duration-300 opacity-60 hover:opacity-100">
+                                    <div class="flex justify-between items-center mb-2 sm:mb-3">
+                                        <div class="flex items-center gap-2 sm:gap-3">
+                                            <span class="text-white font-black text-lg sm:text-xl tracking-tight" dir="ltr">15,000 IQD</span>
+                                            <span class="bg-gray-800 text-gray-400 text-[8px] sm:text-[9px] px-2 sm:px-2.5 py-1 rounded-md uppercase font-black tracking-widest border border-gray-700">احترافي</span>
+                                        </div>
+                                        <div id="tier-2-radio" class="w-5 h-5 sm:w-6 sm:h-6 rounded-full border-2 border-gray-600 bg-transparent flex items-center justify-center"></div>
+                                    </div>
+                                </div>
+
+                                <div id="tier-3" onclick="selectTier(3)" class="cursor-pointer border border-gray-700/50 bg-black/30 hover:bg-white/5 rounded-xl p-3 sm:p-4 transition-all duration-300 opacity-60 hover:opacity-100">
+                                    <div class="flex justify-between items-center mb-2 sm:mb-3">
+                                        <div class="flex items-center gap-2 sm:gap-3">
+                                            <span class="text-white font-black text-lg sm:text-xl tracking-tight" dir="ltr">20,000 IQD</span>
+                                            <span class="bg-gray-800 text-gray-400 text-[8px] sm:text-[9px] px-2 sm:px-2.5 py-1 rounded-md uppercase font-black tracking-widest border border-gray-700">أقصى</span>
+                                        </div>
+                                        <div id="tier-3-radio" class="w-5 h-5 sm:w-6 sm:h-6 rounded-full border-2 border-gray-600 bg-transparent flex items-center justify-center"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <a href="https://reffpa.com/L?tag=d_5610399m_18217c_&site=5610399&ad=18217&r=registration" target="_blank" class="btn-deposit-pulse w-full bg-[#3b82f6] hover:bg-[#2563eb] text-white font-black text-base sm:text-lg py-3.5 sm:py-4 px-4 rounded-xl transition-colors flex items-center justify-center gap-2 sm:gap-3 mt-auto uppercase tracking-wide">
+                        <i class="fa-solid fa-user-plus text-lg sm:text-xl drop-shadow-md"></i> تسجيل وإيداع
+                    </a>
+                </div>
+            </div>
+
+            <!-- CTA -->
+            <div class="mt-8 sm:mt-10 max-w-2xl mx-auto w-full text-center glass-panel p-5 sm:p-6 rounded-2xl border-blue-500/30 px-4 sm:px-0">
+                <a href="https://t.me/abbasprofitbot" target="_blank" class="block w-full bg-gradient-to-r from-[#0088cc] to-[#00aaff] hover:scale-[1.02] text-white font-black text-sm sm:text-lg py-3.5 sm:py-4 px-4 rounded-xl transition-transform shadow-[0_10px_25px_rgba(0,136,204,0.4)] flex items-center justify-center gap-2 sm:gap-3 uppercase tracking-wide">
+                    <i class="fa-brands fa-telegram text-xl sm:text-2xl drop-shadow-md"></i> إرسال لقطة الشاشة للمسؤول
+                </a>
+            </div>
+        </div>
+
+        <!-- ERROR MODAL (ID Validation) -->
+        <div id="error-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/80 backdrop-blur-md transition-opacity">
+            <div class="glass-panel border-red-500/50 rounded-2xl p-6 sm:p-8 max-w-md w-full relative shadow-[0_0_40px_rgba(239,68,68,0.2)] transform transition-transform scale-95 opacity-0" id="error-modal-content" style="transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
+                <button onclick="closeErrorModal()" class="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 hover:text-red-300 transition-colors">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+                <div class="text-center mt-2">
+                    <div class="w-16 h-16 rounded-full bg-red-500/10 border border-red-500/40 flex items-center justify-center mx-auto mb-5 shadow-[0_0_20px_rgba(239,68,68,0.3)]">
+                        <i class="fa-solid fa-hand text-3xl text-red-500 drop-shadow-md"></i>
+                    </div>
+                    <h3 class="text-xl sm:text-2xl font-black text-white mb-3 tracking-wide drop-shadow-md">حساب غير مصرح به 🛑</h3>
+                    <p class="text-gray-300 text-sm sm:text-base font-medium leading-relaxed mb-6">
+                        لم تقم بالتسجيل عبر الرابط الخاص بنا أو باستخدام الرمز الترويجي. يجب عليك التسجيل أولاً بالضغط على الزر أدناه وإدخال الرمز الترويجي عند التسجيل.
+                    </p>
+                    
+                    <div class="flex items-center bg-[#050810] border border-green-500/40 rounded-xl overflow-hidden mb-6 shadow-inner w-full" dir="ltr">
+                        <button onclick="copyText('modal-promo')" class="bg-green-600 hover:bg-green-500 px-4 sm:px-5 py-3 sm:py-3.5 text-white transition-colors font-black text-xs sm:text-sm uppercase tracking-wider shrink-0">
+                            نسخ
+                        </button>
+                        <input type="text" readonly value="IQD77" id="modal-promo" class="bg-transparent neon-text-green font-black text-xl sm:text-2xl py-3 px-2 outline-none mono-font w-full text-center tracking-[0.15em]">
+                    </div>
+
+                    <a href="https://reffpa.com/L?tag=d_5610399m_18217c_&site=5610399&ad=18217&r=registration" target="_blank" class="w-full bg-[#3b82f6] hover:bg-[#2563eb] text-white font-black text-lg py-4 px-4 rounded-xl transition-colors flex items-center justify-center gap-2 shadow-[0_0_25px_rgba(59,130,246,0.4)] uppercase btn-deposit-pulse border border-blue-400/50">
+                        التسجيل 👉✅
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <div id="toast-container" class="fixed bottom-4 right-4 sm:right-auto sm:bottom-6 sm:left-6 z-50 flex flex-col gap-3 pointer-events-none sm:w-[350px]"></div>
+
+    <script>
+        const games = [
+            { id: 'aviator', name: 'Aviator', image: 'https://i.ibb.co.com/Q7hB33tv/aviator.jpg' },
+            { id: 'mines', name: 'Mines', image: 'https://i.ibb.co.com/mrSMWpNz/images-2.jpg' },
+            { id: 'penalty', name: 'PENALTY UNLIMITED', image: 'https://i.ibb.co.com/HT29wgN8/adfcb2f75c8a4f76ada397b21f5db09c.png' },
+            { id: 'chicken', name: 'Chicken Road', image: 'https://i.ibb.co.com/MDT7TP3v/a78678b48f654984bf89d54d556ab3c2.png' },
+            { id: 'tower', name: 'Tower Rush', image: 'https://i.ibb.co.com/jk1CHKTh/Square.webp' },
+            { id: '1xlive', name: '1xLive', image: 'https://i.ibb.co.com/s9Pq4cHz/unnamed-1.png' }
+        ];
+
+        let selectedGames = new Set();
+        let timerInterval;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderGames();
+            startFakeUserCounter();
+            startFakeToasts();
+            generateRecentSignals();
+            startDynamicSignals();
+        });
+
+        function selectGame(gameId) {
+            const selectedCard = document.getElementById(`game-card-${gameId}`);
+            if (!selectedCard) return;
+
+            if (selectedGames.has(gameId)) {
+                // Убираем выбор
+                selectedGames.delete(gameId);
+                selectedCard.classList.remove('border-green-500', 'bg-green-900/20', 'shadow-[0_0_20px_rgba(0,255,136,0.3)]', 'scale-[1.02]');
+                selectedCard.classList.add('bg-[rgba(10,15,25,0.5)]');
+            } else {
+                // Добавляем в выбор
+                selectedGames.add(gameId);
+                selectedCard.classList.remove('border-transparent', 'bg-[rgba(10,15,25,0.5)]', 'needs-selection');
+                selectedCard.classList.add('border-green-500', 'bg-green-900/20', 'shadow-[0_0_20px_rgba(0,255,136,0.3)]', 'scale-[1.02]');
+            }
+
+            // Управление пульсацией всей сетки
+            if (selectedGames.size > 0) {
+                document.querySelectorAll('.game-card').forEach(card => {
+                    card.classList.remove('needs-selection');
+                    const cardGameId = card.id.replace('game-card-', '');
+                    if (!selectedGames.has(cardGameId)) {
+                        card.classList.add('border-transparent');
+                    }
+                });
+            } else {
+                // Если ничего не выбрано, снова включаем пульсацию для всех
+                document.querySelectorAll('.game-card').forEach(card => {
+                    card.classList.add('needs-selection');
+                    card.classList.remove('border-transparent');
+                });
+            }
+        }
+
+        function renderGames() {
+            const grid = document.getElementById('games-grid');
+            if(!grid) return;
+            grid.innerHTML = games.map(game => {
+                return `
+                <div id="game-card-${game.id}" onclick="selectGame('${game.id}')" class="game-card needs-selection cyber-card group h-[140px] sm:h-[180px] cursor-pointer flex flex-col items-center justify-center text-center p-3 sm:p-4 relative border-2 transition-all duration-300 bg-[rgba(10,15,25,0.5)] rounded-2xl">
+                    <div class="relative z-10 flex flex-col items-center w-full h-full justify-center pointer-events-none">
+                        <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center overflow-hidden shadow-[0_0_15px_rgba(0,0,0,0.5)] border border-white/10 group-hover:scale-105 transition-transform duration-300">
+                            <img src="${game.image}" alt="${game.name}" class="w-full h-full object-cover">
+                        </div>
+                        <div class="mt-3">
+                            <h3 class="text-white font-black text-xs sm:text-sm tracking-wide drop-shadow-md" dir="ltr">${game.name}</h3>
+                        </div>
+                    </div>
+                </div>
+            `}).join('');
+        }
+
+        // --- THE CRITICAL LOGIC FOR ID CHECKING ---
+        function startAnalysis() {
+            // 1. Check if at least one game is clicked
+            if (selectedGames.size === 0) {
+                showToast('يرجى اختيار لعبة واحدة على الأقل!', 'default'); // "Please choose at least one game!"
+                return;
+            }
+
+            const rawId = document.getElementById('userid-input').value;
+            
+            // 2. Convert Arabic/Persian numbers to standard English numbers and strip spaces
+            const arabicToEnglish = s => s.replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d));
+            const numericOnly = arabicToEnglish(rawId).replace(/\D/g, ''); // Remove all non-digits
+
+            // 3. Length Validation (MUST be exactly 10)
+            if (numericOnly.length !== 10) {
+                showErrorModal(); // Instant Error Modal
+                return;
+            }
+
+            // 4. Prefix Validation (MUST be 167 - 250)
+            const prefix = parseInt(numericOnly.substring(0, 3));
+            if (prefix >= 167 && prefix <= 250) {
+                // INSTANT SUCCESS -> Go to Paywall
+                navigate('activation');
+            } else {
+                // INSTANT ERROR -> Registration Modal
+                showErrorModal();
+            }
+        }
+        // ------------------------------------------
+
+        function navigate(view) {
+            document.getElementById('view-home').classList.add('hidden');
+            document.getElementById('view-activation').classList.add('hidden');
+            
+            if (view === 'home') {
+                document.getElementById('view-home').classList.remove('hidden');
+            } else if (view === 'activation') {
+                document.getElementById('view-activation').classList.remove('hidden');
+                startTimer();
+            }
+            window.scrollTo(0,0);
+        }
+
+        function showErrorModal() {
+            const modal = document.getElementById('error-modal');
+            const content = document.getElementById('error-modal-content');
+            modal.classList.remove('hidden');
+            
+            requestAnimationFrame(() => {
+                setTimeout(() => {
+                    content.classList.remove('scale-95', 'opacity-0');
+                    content.classList.add('scale-100', 'opacity-100');
+                }, 10);
+            });
+        }
+
+        function closeErrorModal() {
+            const modal = document.getElementById('error-modal');
+            const content = document.getElementById('error-modal-content');
+            
+            content.classList.remove('scale-100', 'opacity-100');
+            content.classList.add('scale-95', 'opacity-0');
+            
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        function toggleFaq(button) {
+            const content = button.nextElementSibling;
+            const icon = button.querySelector('i');
+            if (content.style.maxHeight) {
+                content.style.maxHeight = null;
+                icon.style.transform = 'rotate(0deg)';
+                button.classList.remove('text-white');
+            } else {
+                content.style.maxHeight = content.scrollHeight + "px";
+                icon.style.transform = 'rotate(180deg)';
+                button.classList.add('text-white');
+            }
+        }
+
+        function selectTier(selectedId) {
+            const tiers = [1, 2, 3];
+            tiers.forEach(id => {
+                const card = document.getElementById(`tier-${id}`);
+                const radio = document.getElementById(`tier-${id}-radio`);
+                if (id === selectedId) {
+                    card.className = "cursor-pointer border border-green-500/50 bg-green-500/10 rounded-xl p-3 sm:p-4 transition-all duration-300 transform scale-[1.02] shadow-[0_0_20px_rgba(0,255,136,0.15)] relative overflow-hidden";
+                    radio.className = "w-5 h-5 sm:w-6 sm:h-6 rounded-full border-[3px] sm:border-4 border-green-400 bg-[#050810] flex items-center justify-center shadow-[0_0_10px_rgba(0,255,136,0.5)]";
+                } else {
+                    card.className = "cursor-pointer border border-gray-700/50 bg-black/30 hover:bg-white/5 rounded-xl p-3 sm:p-4 transition-all duration-300 opacity-60 hover:opacity-100";
+                    radio.className = "w-5 h-5 sm:w-6 sm:h-6 rounded-full border-2 border-gray-600 bg-transparent flex items-center justify-center";
+                }
+            });
+        }
+
+        function startTimer() {
+            if (timerInterval) clearInterval(timerInterval);
+            let time = 15 * 60;
+            const timerEl = document.getElementById('slot-timer');
+            timerInterval = setInterval(() => {
+                time--;
+                if (time < 0) {
+                    clearInterval(timerInterval);
+                    timerEl.innerText = "00:00";
+                    timerEl.classList.add('text-red-500');
+                    return;
+                }
+                const m = Math.floor(time / 60).toString().padStart(2, '0');
+                const s = (time % 60).toString().padStart(2, '0');
+                timerEl.innerText = `${m}:${s}`;
+                if (time < 300) {
+                    timerEl.classList.remove('text-white');
+                    timerEl.classList.add('text-red-500');
+                }
+            }, 1000);
+        }
+
+        function copyText(elementId) {
+            const el = document.getElementById(elementId);
+            el.select();
+            el.setSelectionRange(0, 99999);
+            document.execCommand("copy");
+            showToast('تم النسخ إلى الحافظة!', 'success');
+        }
+
+        function startFakeUserCounter() {
+            const el = document.getElementById('user-count');
+            let count = 1482;
+            setInterval(() => {
+                count += Math.floor(Math.random() * 14) - 5;
+                if(count < 1200) count = 1200;
+                el.innerText = count.toLocaleString('en-US');
+            }, 3500);
+        }
+
+        function getStatusHtml(isMiss) {
+            return isMiss 
+                ? '<div class="inline-block bg-red-500/10 text-red-500 px-2 sm:px-3 py-1 rounded border border-red-500/30 text-[9px] sm:text-[10px] font-black tracking-widest uppercase shadow-[0_0_10px_rgba(239,68,68,0.2)]">فشل</div>' 
+                : '<div class="inline-block bg-green-500/10 text-green-400 px-2 sm:px-3 py-1 rounded border border-green-500/30 text-[9px] sm:text-[10px] font-black tracking-widest uppercase shadow-[0_0_10px_rgba(0,255,136,0.2)]">نجاح</div>';
+        }
+
+        function generateRecentSignals() {
+            const tbody = document.getElementById('signals-table-body');
+            if(!tbody) return;
+            const results = [];
+            for(let i=0; i<6; i++) {
+                const isMiss = Math.random() > 0.80;
+                const game = games[Math.floor(Math.random() * games.length)];
+                let hashText = game.id === 'aviator' ? `Crash @ ${(Math.random() * 5 + 1.2).toFixed(2)}x` : 
+                               game.id === 'mines' ? `Safe: R${Math.floor(Math.random()*5+1)} C${Math.floor(Math.random()*5+1)}` : 
+                               `0x${Math.random().toString(16).substring(2, 10)}...`;
+                results.push(`
+                    <tr class="hover:bg-white/5 transition-colors">
+                        <td class="px-4 sm:px-5 py-3 sm:py-3.5 flex items-center gap-2 sm:gap-3">
+                            <img src="${game.image}" class="w-6 h-6 sm:w-7 sm:h-7 rounded-md object-cover shadow-sm border border-white/5"> 
+                            <span class="text-gray-300 font-bold tracking-wide" dir="ltr">${game.name}</span>
+                        </td>
+                        <td class="px-4 sm:px-5 py-3 sm:py-3.5 mono-font text-[10px] sm:text-xs text-cyan-500/80 font-bold text-left" dir="ltr">${hashText}</td>
+                        <td class="px-4 sm:px-5 py-3 sm:py-3.5 text-left">${getStatusHtml(isMiss)}</td>
+                    </tr>
+                `);
+            }
+            tbody.innerHTML = results.join('');
+        }
+
+        function startDynamicSignals() {
+            setInterval(() => {
+                const tbody = document.getElementById('signals-table-body');
+                if(!tbody) return;
+                const isMiss = Math.random() > 0.80;
+                const game = games[Math.floor(Math.random() * games.length)];
+                let hashText = game.id === 'aviator' ? `Crash @ ${(Math.random() * 5 + 1.2).toFixed(2)}x` : 
+                               game.id === 'mines' ? `Safe: R${Math.floor(Math.random()*5+1)} C${Math.floor(Math.random()*5+1)}` : 
+                               `0x${Math.random().toString(16).substring(2, 10)}...`;
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-white/5 transition-colors new-row";
+                tr.innerHTML = `
+                    <td class="px-4 sm:px-5 py-3 sm:py-3.5 flex items-center gap-2 sm:gap-3">
+                        <img src="${game.image}" class="w-6 h-6 sm:w-7 sm:h-7 rounded-md object-cover shadow-sm border border-white/5"> 
+                        <span class="text-gray-300 font-bold tracking-wide" dir="ltr">${game.name}</span>
+                    </td>
+                    <td class="px-4 sm:px-5 py-3 sm:py-3.5 mono-font text-[10px] sm:text-xs text-cyan-500/80 font-bold text-left" dir="ltr">${hashText}</td>
+                    <td class="px-4 sm:px-5 py-3 sm:py-3.5 text-left">${getStatusHtml(isMiss)}</td>
+                `;
+                tbody.insertBefore(tr, tbody.firstChild);
+                if (tbody.children.length > 6) tbody.removeChild(tbody.lastChild);
+            }, 3000);
+        }
+
+        const names = ['Ali_99', 'CryptoKing', 'User4821', 'Moha_Iq', 'Kazim88', 'Sarah_X', 'Winner001', 'GhostFace'];
+        const amounts = [15000, 42000, 89000, 21000, 50000, 33000, 105000];
+        const fakeGames = ['Aviator', 'Mines', '1xLive'];
+
+        function startFakeToasts() {
+            setInterval(() => {
+                if(Math.random() > 0.3) {
+                    const name = names[Math.floor(Math.random() * names.length)];
+                    const amount = amounts[Math.floor(Math.random() * amounts.length)];
+                    const game = fakeGames[Math.floor(Math.random() * fakeGames.length)];
+                    showToast(`<b class="text-white">${name}</b> اعترض للتو ${amount.toLocaleString('en-US')} IQD في ${game}!`, 'win');
+                }
+            }, Math.floor(Math.random() * 7000) + 8000);
+        }
+
+        function showToast(message, type = 'default') {
+            const container = document.getElementById('toast-container');
+            if(!container) return;
+            const toast = document.createElement('div');
+            let bgClass = 'bg-[#050810]/90 border-gray-700/50';
+            let icon = '<i class="fa-solid fa-info-circle text-cyan-400"></i>';
+            if (type === 'success') {
+                bgClass = 'bg-green-900/80 border-green-500/50 shadow-[0_0_20px_rgba(0,255,136,0.2)]';
+                icon = '<i class="fa-solid fa-check-circle text-green-400"></i>';
+            } else if (type === 'win') {
+                bgClass = 'bg-[#050810]/90 border-yellow-500/30 shadow-[0_0_20px_rgba(234,179,8,0.15)]';
+                icon = '<i class="fa-solid fa-bolt text-yellow-400"></i>';
+            }
+            toast.className = `glass-panel ${bgClass} rounded-xl p-3 sm:p-4 flex items-center gap-3 sm:gap-4 text-xs sm:text-sm text-gray-300 toast-enter backdrop-blur-xl shadow-2xl w-full`;
+            toast.innerHTML = `${icon} <span class="font-medium tracking-wide">${message}</span>`;
+            container.appendChild(toast);
+            requestAnimationFrame(() => {
+                toast.classList.remove('toast-enter');
+                toast.classList.add('toast-enter-active');
+            });
+            setTimeout(() => {
+                toast.classList.remove('toast-enter-active');
+                toast.classList.add('toast-leave');
+                setTimeout(() => toast.remove(), 500);
+            }, 4000);
+        }
+    </script>
+</body>
+</html>
